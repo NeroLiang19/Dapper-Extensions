@@ -1,0 +1,6 @@
+
+ocsharpsquid:S3776T"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(­Î÷Ô
+fcsharpsquid:S2589c"DChange this condition so that it does not always evaluate to 'True'.(¼Øƒ´ùÿÿÿÿ
+acsharpsquid:S2589i"DChange this condition so that it does not always evaluate to 'True'.(¯‘ÉÌ
+scsharpsquid:S6608/"VIndexing at Count-1 should be used instead of the "Enumerable" extension method "Last"(ÿ¦© 
+xcsharpsquid:S66080"VIndexing at Count-1 should be used instead of the "Enumerable" extension method "Last"(Ç˜›şÿÿÿÿ

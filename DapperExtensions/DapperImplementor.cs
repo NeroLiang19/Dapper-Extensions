@@ -607,21 +607,21 @@ namespace DapperExtensions
             return dynamicParameters.Get<object>(SqlGenerator.Configuration.Dialect.ParameterPrefix + "IdOutParam");
         }
 
-        private object InsertIdentity(IDbConnection connection, IDbTransaction transaction,
+        private object InsertIdentity<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, IClassMapper classMap, string sql, DynamicParameters dynamicParameters)
         {
-            IEnumerable<long> result;
+            IEnumerable<T> result;
 
             if (SqlGenerator.SupportsMultipleStatements())
             {
                 sql += SqlGenerator.Configuration.Dialect.BatchSeperator + SqlGenerator.IdentitySql(classMap);
-                result = connection.Query<long>(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text);
+                result = connection.Query<T>(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text);
             }
             else
             {
                 connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
                 sql = SqlGenerator.IdentitySql(classMap);
-                result = connection.Query<long>(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text);
+                result = connection.Query<T>(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text);
             }
             LastExecutedCommand = sql;
 
@@ -695,15 +695,23 @@ namespace DapperExtensions
                 var keyColumn = triggerIdentityColumn ?? identityColumn;
                 object keyValue;
 
-                dynamicParameters = GetDynamicParameters(entity, dynamicParameters, keyColumn, true);
+                dynamicParameters = GetDynamicParameters(entity, null, keyColumn, true);
 
                 if (triggerIdentityColumn != null)
+                    keyValue = InsertTriggered(connection, entity, transaction, commandTimeout, sql,
+                        triggerIdentityColumn,
+                        dynamicParameters);
+                else if (keyColumn.MemberType == typeof(int))
                 {
-                    keyValue = InsertTriggered(connection, entity, transaction, commandTimeout, sql, triggerIdentityColumn, dynamicParameters);
+                    keyValue= InsertIdentity<int>(connection, transaction, commandTimeout, classMap, sql, dynamicParameters);
+                }
+                else if (keyColumn.MemberType == typeof(long))
+                {
+                    keyValue =InsertIdentity<long>(connection, transaction, commandTimeout, classMap, sql, dynamicParameters);
                 }
                 else
                 {
-                    keyValue = InsertIdentity(connection, transaction, commandTimeout, classMap, sql, dynamicParameters);
+                    throw new Exception("");
                 }
 
                 keyValues.Add(keyColumn.Name, keyValue);
