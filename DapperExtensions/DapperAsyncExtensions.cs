@@ -92,14 +92,6 @@ namespace DapperExtensions
         }
 
         /// <summary>
-        /// Initializes the <see cref="DapperAsyncExtensions"/> class.
-        /// </summary>
-        static DapperAsyncExtensions()
-        {
-            Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());
-        }
-
-        /// <summary>
         /// Return property liste from (anonymous) type
         /// </summary>
         /// <typeparam name="T"></typeparam>

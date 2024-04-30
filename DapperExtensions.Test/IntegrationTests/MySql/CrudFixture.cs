@@ -5,6 +5,11 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using DapperExtensions.Mapper;
+using DapperExtensions.Sql;
+using MySql.Data.MySqlClient;
 
 namespace DapperExtensions.Test.IntegrationTests.MySql
 {
@@ -23,6 +28,27 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
                 Assert.AreEqual(1, id);
                 Assert.AreEqual(1, p.Id);
                 Dispose();
+            }
+            
+            [Test]
+            public async Task AddsEntityToDatabase_ReturnsKeytest()
+            {
+                DapperAsyncExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                using var conn = new MySqlConnection("server=192.168.0.234;port=3366;database=xy_boss;uid=test;pwd=test;charset=utf8;pooling=true;DefaultCommandTimeout=60;");
+                conn.Open();
+                var list = await conn.GetListAsync<stock_task>();
+
+                var entity = list.First();
+                entity.stock_task_id = 0;
+
+                entity.remark = "1111";
+                var trans = await conn.BeginTransactionAsync();
+                var result = await conn.InsertAsync(entity, trans);
+
+                entity.remark = "222222";
+                var result2 = await conn.UpdateAsync(entity, trans);
+                
+                
             }
 
             [Test]
@@ -456,6 +482,130 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
                 people2.Should().HaveCount(1);
                 Dispose();
             }
+        }
+    }
+
+    public class stock_task
+    {
+        /// <summary>
+        ///主键
+        /// </summary>
+        public int stock_task_id { get; set; }
+
+
+        /// <summary>
+        ///流水号（BI审批序号）
+        /// </summary>
+        public string serial_number { get; set; }
+
+
+        /// <summary>
+        ///sap收货号，多个，逗号隔开
+        /// </summary>
+        public string sap_receipt_number { get; set; }
+
+
+        /// <summary>
+        ///来源单号
+        /// </summary>
+        public string source_number { get; set; }
+
+        /// <summary>
+        ///来源单id
+        /// </summary>
+        public int source_id { get; set; }
+
+        /// <summary>
+        /// 单据类型
+        /// </summary>
+        public int order_type { get; set; }
+
+        /// <summary>
+        ///状态(详见FinishStatus枚举)
+        /// </summary>
+        public int status { get; set; }
+
+        /// <summary>
+        ///创建者
+        /// </summary>
+        public int creator { get; set; }
+
+        /// <summary>
+        ///创建时间
+        /// </summary>
+        public DateTime create_time { get; set; }
+
+        /// <summary>
+        ///更新时间
+        /// </summary>
+        public DateTime update_time { get; set; }
+
+        /// <summary>
+        ///开始收料时间
+        /// </summary>
+        public DateTime? start_receipt_time { get; set; }
+
+
+        /// <summary>
+        ///起始地址
+        /// </summary>
+        public string start_address { get; set; }
+
+
+        /// <summary>
+        ///目标地址
+        /// </summary>
+        public string destination_address { get; set; }
+
+        /// <summary>
+        ///仓库id
+        /// </summary>
+        public int warehouse_id { get; set; }
+
+        /// <summary>
+        /// 计划到料时间
+        /// </summary>
+        public DateTime? plan_delivery_time { get; set; }
+
+        /// <summary>
+        /// 业务伙伴id
+        /// </summary>
+        public int supplirer_id { get; set; }
+
+        /// <summary>
+        /// 业务员
+        /// </summary>
+        public int operator_id { get; set; }
+
+        /// <summary>
+        /// 出入库类型
+        /// </summary>
+        public int stock_type { get; set; } = 1;
+
+        /// <summary>
+        /// 业务类型
+        /// </summary>
+        public int stock_io_type { get; set; }
+        
+        /// <summary>
+        ///     是否自动生成
+        /// </summary>
+        public bool mark_as_auto_generate { get; set; }
+        
+        /// <summary>
+        ///     备注
+        /// </summary>
+        public string remark { get; set; }
+        
+    }
+    
+    public class stock_taskMapper : ClassMapper<stock_task>
+    {
+        public stock_taskMapper()
+        {
+            TableName = nameof(stock_task);
+            Map(m => m.stock_task_id).Key(KeyType.Identity);
+            AutoMap();
         }
     }
 }

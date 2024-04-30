@@ -1,12 +1,0 @@
-
-šcsharpsquid:S3776="RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(Âù«•úÿÿÿÿJ$6d942465-01d2-431b-9ea3-8aed38665c00
-…csharpsquid:S1854š"<Remove this useless assignment to local variable 'baseType'.(ÚøÎÜþÿÿÿÿJ$a554615d-b41c-4c38-ad75-e0643d742821
-šcsharpsquid:S3973¹"VUse curly braces or indentation to denote the code conditionally executed by this 'if'(ÍŸóøJ$af5ba275-5b40-4923-8980-c9fdcae668b1
-vcsharpsquid:S1905Â"2Remove this unnecessary cast to 'UnaryExpression'.(Â•¥¢J$d0526b3c-baee-43e5-b51a-aa6421631048
-qcsharpsquid:S1905Ã"-Remove this unnecessary cast to 'Expression'.(Ö¿¢–J$eb3f8d79-47cb-4669-a262-364990314e86
-_csharpsquid:S16434"Use a StringBuilder instead.(ýÝáèJ$8ece7e62-caaa-4a0c-bc07-5fc92773e24f
-Šcsharpsquid:S112Ä"B'System.NullReferenceException' should not be thrown by user code.(°æó¸ýÿÿÿÿJ$b05260e6-4836-4b74-b27e-74e9054e5888
-…csharpsquid:S112Ê"B'System.NullReferenceException' should not be thrown by user code.(ËŒ§J$d37c7486-1a04-4afe-b798-b07e75058535
-}csharpsquid:S112Ý"5'System.Exception' should not be thrown by user code.(ðÒ™¶úÿÿÿÿJ$423e349b-e792-4387-b641-4fc9af3efaa6
-tcsharpsquid:S1264A",Replace this 'for' loop with a 'while' loop.(ÆÖÓ½øÿÿÿÿJ$46f3dc33-3ef2-4ec9-bc25-a695ec2700a7
-rcsharpsquid:S1481Ÿ")Remove the unused local variable 'ctors'.(™“Ç–úÿÿÿÿJ$062a1963-ec46-4eef-92ba-a0d7b2945fff

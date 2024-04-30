@@ -384,3 +384,5 @@ _ReSharper.*
 # Nuget
 [Pp]ackages
 
+/.idea
+/.idea/.idea.DapperExtensions

@@ -40,7 +40,7 @@
 		<PackageReference Include="ReportGenerator" Version="4.8.8" />
 		<PackageReference Include="Slapper.AutoMapper" Version="2.0.1" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-		<PackageReference Include="Dapper" Version="2.0.90" />
+		<PackageReference Include="Dapper" Version="2.1.35" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' != 'net461'">
