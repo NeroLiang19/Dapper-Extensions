@@ -109,7 +109,7 @@ namespace DapperExtensions
 
         static DapperExtensions()
         {
-            Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());
+            Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
         }
 
         /// <summary>

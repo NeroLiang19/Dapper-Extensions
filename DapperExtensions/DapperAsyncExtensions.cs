@@ -90,6 +90,14 @@ namespace DapperExtensions
                 return _instance;
             }
         }
+        
+        /// <summary>
+        /// Initializes the <see cref="DapperAsyncExtensions"/> class.
+        /// </summary>
+        static DapperAsyncExtensions()
+        {
+            Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+        }
 
         /// <summary>
         /// Return property liste from (anonymous) type
