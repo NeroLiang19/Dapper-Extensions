@@ -228,13 +228,14 @@ namespace DapperExtensions
             return await InternalUpdateAsync(connection, entity, classMap, predicate, transaction, cols, commandTimeout, ignoreAllKeyProperties);
         }
 
-        private async void InternalUpdateAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, IList<IProjection> cols,
+        private async Task InternalUpdateAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, IList<IProjection> cols,
             int? commandTimeout, bool ignoreAllKeyProperties = false)
         {
-            GetMapAndPredicate<T>(entities.FirstOrDefault(), out var classMap, out var predicate, true);
-
             foreach (var e in entities)
+            {
+                GetMapAndPredicate<T>(e, out var classMap, out var predicate, true);
                 await InternalUpdateAsync(connection, e, classMap, predicate, transaction, cols, commandTimeout, ignoreAllKeyProperties);
+            }
         }
 
         private async Task<T> InternalGetAsync<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout, IList<IProjection> colsToSelect, IList<IReferenceMap> includedProperties = null)

@@ -770,10 +770,11 @@ namespace DapperExtensions
 
         protected void InternalUpdate<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, IList<IProjection> cols, int? commandTimeout, bool ignoreAllKeyProperties = false)
         {
-            GetMapAndPredicate<T>(entities.FirstOrDefault(), out var classMap, out var predicate, true);
-
             foreach (var e in entities)
+            {
+                GetMapAndPredicate<T>(e, out var classMap, out var predicate, true);
                 InternalUpdate(connection, e, classMap, predicate, transaction, cols, commandTimeout, ignoreAllKeyProperties);
+            }
         }
 
         protected T InternalGet<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout, IList<IProjection> colsToSelect, IList<IReferenceMap> includedProperties = null)

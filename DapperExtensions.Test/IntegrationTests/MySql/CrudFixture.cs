@@ -5,10 +5,12 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using DapperExtensions.Mapper;
 using DapperExtensions.Sql;
+using DapperExtensions.Test.Data.TestEntity;
 using MySql.Data.MySqlClient;
 
 namespace DapperExtensions.Test.IntegrationTests.MySql
@@ -31,7 +33,7 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
             }
             
             [Test]
-            public async Task AddsEntityToDatabase_ReturnsKeytest()
+            public async Task GetListTest()
             {
                 DapperAsyncExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
                 DapperExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
@@ -39,25 +41,10 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
                 conn.Open();
                 try
                 {
-                    var list = (await conn.GetListAsync<stock_task>()).ToList();
-
-                    var entity = list.First();
-                    entity.stock_task_id = 0;
-
-                    entity.remark = "1111";
-                    var trans = await conn.BeginTransactionAsync();
-                    var result = await conn.InsertAsync(entity, trans);
-
-                    entity.remark = "222222";
-                    var result2 = await conn.UpdateAsync(entity, trans);
-
-                    var deleteIdList = new List<int>
-                    {
-                        131300, 131299, 131298
-                    };
-                    var itemList = (await conn.GetListAsync<stock_task_item>()).ToList();
-                    var deleteList = itemList.Where(x => deleteIdList.Contains(x.stock_task_item_id));
-                    conn.Delete(deleteList, trans);
+                    var transaction = await conn.BeginTransactionAsync();
+                    var predicate = Predicates.Field<stock_task>(f => f.serial_number, Operator.Eq, "ac4eea");
+                    var stockTaskInfoList = await conn.GetListAsync<stock_task>(predicate, transaction: transaction);
+                    var stockTaskInfo = stockTaskInfoList.ToList();
                 }
                 catch (Exception e)
                 {
@@ -65,6 +52,53 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
                     throw;
                 }
             }
+            
+            [Test]
+            public async Task UpdatePartialTest()
+            {
+                DapperAsyncExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                DapperExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                using var conn = new MySqlConnection("server=192.168.0.234;port=3366;database=xy_boss;uid=test;pwd=test;charset=utf8;pooling=true;DefaultCommandTimeout=60;");
+                conn.Open();
+                var transaction = await conn.BeginTransactionAsync();
+
+                try
+                {
+                    var predicate = Predicates.Field<produce>(x => x.produce_id, Operator.Eq,
+                        new List<int> { 35463, 35462, 35461});
+                    var produceList = (await conn.GetListAsync<produce>(predicate)).ToList();
+
+                    // updateExpression
+                    Expression<Func<produce, UpdateProduceForPlan>> updateExpression = p =>
+                        new UpdateProduceForPlan
+                        {
+                            plan_produce_begin_date = p.plan_produce_begin_date,
+                            plan_produce_end_date = p.plan_produce_end_date,
+                            update_time = p.update_time,
+                            updater = p.updater
+                        };
+                    
+                    var updateList = new List<produce>();
+                    foreach (var produce in produceList)
+                    {
+                        produce.plan_produce_begin_date = DateTime.Now.AddDays(-20);
+                        produce.plan_produce_end_date = DateTime.Now.AddDays(20);
+                        produce.update_time = DateTime.Now;
+                        produce.updater = 1;
+                        updateList.Add(produce);
+                    }
+                    
+                    conn.UpdatePartial(updateList, updateExpression, transaction);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
+            
 
             [Test]
             public void AddsEntityToDatabase_ReturnsCompositeKey()
