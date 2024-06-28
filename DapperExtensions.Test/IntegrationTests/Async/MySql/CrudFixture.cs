@@ -320,10 +320,10 @@ namespace DapperExtensions.Test.IntegrationTests.Async.MySql
                 Arrange(out var id1, out var id2, out var id3, out var id4);
 
                 var sort = new List<ISort>
-                                    {
-                                        Predicates.Sort<Person>(p => p.LastName),
-                                        Predicates.Sort<Person>("FirstName")
-                                    };
+                {
+                    Predicates.Sort<Person>(p => p.LastName),
+                    Predicates.Sort<Person>("FirstName")
+                };
 
                 var list = Db.GetPage<Person>(null, sort, 0, 2).Result;
                 Assert.AreEqual(2, list.Count());

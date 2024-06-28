@@ -99,6 +99,73 @@ namespace DapperExtensions.Test.IntegrationTests.MySql
                 }
             }
             
+                        
+            [Test]
+            public async Task InsertSnowIdTest()
+            {
+                DapperAsyncExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                DapperExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                using var conn = new MySqlConnection("server=192.168.0.234;port=3366;database=xy_boss;uid=test;pwd=test;charset=utf8;pooling=true;DefaultCommandTimeout=60;");
+                conn.Open();
+                var transaction = await conn.BeginTransactionAsync();
+
+                try
+                {
+                    var maintenanceOrder = new maintenance_order
+                    {
+                        maintenance_order_id = 1767921778245636097,
+                        serial_number = "serialNumber",
+                        order_number = "orderNumber",
+                        source_order_type = 1,
+                        basis_type = "2",
+                        produce_id = 1,
+                        produce_order = "test",
+                        item_id = 2,
+                        product_guid = "productGuid",
+                        status = 1,
+                        remark = "remark",
+                        problem_cause = "remark",
+                        creator = 1,
+                        create_time = DateTime.Now,
+                        update_user = 2,
+                        update_time = DateTime.Now,
+                        question_feedback_approval_number = 123
+                    };
+
+                    var id = conn.Insert(maintenanceOrder, transaction);
+                    Console.WriteLine(id);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
+            
+            [Test]
+            public void QueryItemList()
+            {
+                DapperAsyncExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect());
+                DapperExtensions.Configure(typeof(AutoClassMapper<>), new List<Assembly>(), new MySqlDialect()); 
+                using var conn = new MySqlConnection("server=192.168.0.234;port=3366;database=xy_boss;uid=test;pwd=test;charset=utf8;pooling=true;DefaultCommandTimeout=60;");
+                conn.Open();
+                
+
+                try
+                {
+                    var attrList = new List<string> { "3" };
+                    var predicate = Predicates.Field<item>(f => f.attr, Operator.Eq, attrList);
+                    var itemIdsByAttr = conn.GetList<item>(predicate).Select(a => a.item_id).ToList();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
+
 
             [Test]
             public void AddsEntityToDatabase_ReturnsCompositeKey()
