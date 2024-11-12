@@ -26,7 +26,7 @@ Customized mappings are achieved through [ClassMapper](https://github.com/tmsmit
 Features
 --------
 * Zero configuration out of the box.
-* Automatic mapping of POCOs for Get, Insert, Update, and Delete operations.
+* Automatic mapping of POCOs for Get, Insert, Update, and Delete operations. t
 * GetList, Count methods for more advanced scenarios.
 * GetPage for returning paged result sets.
 * Automatic support for Guid and Integer [primary keys](https://github.com/tmsmith/Dapper-Extensions/wiki/KeyTypes) (Includes manual support for other key types).
